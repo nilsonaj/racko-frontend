@@ -1,0 +1,3 @@
+name = "racko-game"
+pages_build_output_dir = "."
+
