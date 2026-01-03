@@ -1,8 +1,11 @@
+// Racko Client v1.1 - Bug fix for duplicate racks
 // Connect to WebSocket server
 // Change this URL after deploying to Render.com
 const SOCKET_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:3000'
-  : 'https://racko-game.onrender.com'; // UPDATE THIS AFTER DEPLOYING!
+  : 'https://YOUR-APP-NAME.onrender.com'; // UPDATE THIS AFTER DEPLOYING!
+
+const CLIENT_VERSION = "1.1";
 
 const socket = io(SOCKET_URL);
 
@@ -134,17 +137,21 @@ function createGame(name, pc, ai, pm) {
     for (let i = 1; i < pc; i++) {
       // Create a new array for each player's rack to avoid reference issues
       const playerRack = deck.splice(0, RACK_SIZE);
+      console.log(`AI ${i} rack:`, playerRack);
       players.push({id: `ai_${i}`, name: `AI ${i}`, rack: [...playerRack], score: 0, isAI: true});
     }
   } else {
     for (let i = 1; i < pc; i++) {
       const pendingRack = deck.splice(0, RACK_SIZE);
+      console.log(`Pending player ${i} rack:`, pendingRack);
       pending.push([...pendingRack]);
     }
   }
   
+  console.log(`Deck size before discard: ${deck.length}`);
   // Pop discard card BEFORE assigning drawPile to avoid mutation
   const discardCard = deck.pop();
+  console.log(`Discard card: ${discardCard}, Remaining deck: ${deck.length}`);
   
   const game = {
     roomCode: code, maxPlayers: pc, useAI: ai, players, pendingPlayerCards: pending,
@@ -429,6 +436,7 @@ function renderLobby() {
       <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
         <div class="text-center mb-8">
           <h1 class="text-5xl font-bold text-green-800 mb-2">Racko</h1>
+          <p class="text-xs text-gray-400">v${CLIENT_VERSION}</p>
         </div>
         
         <div class="space-y-6">
@@ -501,7 +509,7 @@ function renderGame() {
   let html = `<div class="min-h-screen bg-gradient-to-br from-green-800 to-emerald-800 p-4">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-4">
-        <h1 class="text-4xl font-bold text-white mb-2">Racko</h1>
+        <h1 class="text-4xl font-bold text-white mb-2">Racko <span class="text-xs text-green-200">v${CLIENT_VERSION}</span></h1>
         <div class="flex items-center justify-center gap-2 mb-2">
           <span class="text-green-100 text-sm">Room:</span>
           <code class="bg-white/20 px-3 py-1 rounded text-white font-bold">${state.roomCode}</code>
