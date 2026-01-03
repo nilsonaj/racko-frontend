@@ -132,15 +132,23 @@ function createGame(name, pc, ai, pm) {
   
   if (ai) {
     for (let i = 1; i < pc; i++) {
-      players.push({id: `ai_${i}`, name: `AI ${i}`, rack: deck.splice(0, RACK_SIZE), score: 0, isAI: true});
+      // Create a new array for each player's rack to avoid reference issues
+      const playerRack = deck.splice(0, RACK_SIZE);
+      players.push({id: `ai_${i}`, name: `AI ${i}`, rack: [...playerRack], score: 0, isAI: true});
     }
   } else {
-    for (let i = 1; i < pc; i++) pending.push(deck.splice(0, RACK_SIZE));
+    for (let i = 1; i < pc; i++) {
+      const pendingRack = deck.splice(0, RACK_SIZE);
+      pending.push([...pendingRack]);
+    }
   }
+  
+  // Pop discard card BEFORE assigning drawPile to avoid mutation
+  const discardCard = deck.pop();
   
   const game = {
     roomCode: code, maxPlayers: pc, useAI: ai, players, pendingPlayerCards: pending,
-    drawPile: deck, discardPile: [deck.pop()], currentTurn: 0, winner: null, practiceMode: pm
+    drawPile: [...deck], discardPile: [discardCard], currentTurn: 0, winner: null, practiceMode: pm
   };
   
   state.loading = true;
