@@ -3,7 +3,7 @@
 // Change this URL after deploying to Render.com
 const SOCKET_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:3000'
-  : 'https://YOUR-APP-NAME.onrender.com'; // UPDATE THIS AFTER DEPLOYING!
+  : 'https://racko-game.onrender.com'; // UPDATE THIS AFTER DEPLOYING!
 
 const CLIENT_VERSION = "1.1";
 
